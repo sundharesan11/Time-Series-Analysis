@@ -4,9 +4,6 @@ output:
     keep_md: true
 ---
 
-```{r}
-install.packages("rmarkdown")
-```
 
 ```{r echo=TRUE}
 library(ggplot2)
@@ -40,7 +37,7 @@ df
 
 ```{r}
 
-# Plot the Bass Diffusion Curve
+# Bass Diffusion Curve
 ggplot(df, aes(x = Time, y = Cumulative_Adopters)) +
   geom_line(color = "blue", linewidth = 1) +
   geom_hline(yintercept = M, linetype = "dashed", color = "black", linewidth = 1.2) +
@@ -52,18 +49,18 @@ ggplot(df, aes(x = Time, y = Cumulative_Adopters)) +
 ```
 
 ```{r}
-
-# Compute new adopters at each time step
-dN_t <- c(diff(N_t), tail(diff(N_t), 1))  # First derivative (rate of new adoptions)
-
-# Compute contributions of innovators and imitators
+# innovators and imitators
 innovators <- p * (M - N_t)  # p * (Remaining Market)
 imitators <- q * (N_t / M) * (M - N_t)  # q * (Adopters Fraction) * (Remaining Market)
 new_adopters <- innovators + imitators
 
 df2 <- data.frame(Time = t, New_Adopters = new_adopters, Innovators = innovators, Imitators = imitators)
+df2
 
-# Plot the adoption components
+```
+
+```{r}
+# Plot of adoption components
 ggplot(df2, aes(x = Time)) +
   geom_line(aes(y = New_Adopters, color = "New Adopters"), linetype = "dashed", linewidth = 1.2) +
   geom_line(aes(y = Innovators, color = "Innovators"), linewidth = 1.2) +
@@ -75,4 +72,5 @@ ggplot(df2, aes(x = Time)) +
        color = "Legend") +
   theme_minimal()
 ```
+
 
