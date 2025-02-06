@@ -1,7 +1,5 @@
 ---
-output: 
-  html_document: 
-    keep_md: true
+output: github_document
 ---
 
 
@@ -35,7 +33,7 @@ df
 
 ```
 
-```{r}
+```{r, echo=TRUE, results="asis"}
 
 # Bass Diffusion Curve
 ggplot(df, aes(x = Time, y = Cumulative_Adopters)) +
@@ -48,7 +46,7 @@ ggplot(df, aes(x = Time, y = Cumulative_Adopters)) +
 
 ```
 
-```{r}
+```{r, echo=TRUE, results="asis"}
 # innovators and imitators
 innovators <- p * (M - N_t)  # p * (Remaining Market)
 imitators <- q * (N_t / M) * (M - N_t)  # q * (Adopters Fraction) * (Remaining Market)
@@ -59,7 +57,7 @@ df2
 
 ```
 
-```{r}
+```{r, echo=TRUE, results="asis"}
 # Plot of adoption components
 ggplot(df2, aes(x = Time)) +
   geom_line(aes(y = New_Adopters, color = "New Adopters"), linetype = "dashed", linewidth = 1.2) +
