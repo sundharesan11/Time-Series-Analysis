@@ -1,0 +1,84 @@
+
+```{r}
+library(ggplot2)
+
+# Bass model parameters
+M <- 1000  # Total market potential
+p <- 0.03  # Coefficient of innovation
+q <- 0.38  # Coefficient of imitation
+
+# Time range
+t <- seq(0, 20, length.out = 100)  # 20 time periods
+
+```
+
+
+```{r}
+
+# Bass model equation for cumulative adoption
+bass_diffusion <- function(t, M, p, q) {
+  exp_term <- exp(-(p + q) * t)
+  return(M * (1 - exp_term) / (1 + (q / p) * exp_term))
+}
+
+# Compute adoption over time
+N_t <- bass_diffusion(t, M, p, q)
+
+# Create a data frame for plotting
+df <- data.frame(Time = t, Cumulative_Adopters = N_t)
+df
+
+```
+
+
+```{r}
+
+# Plot the Bass Diffusion Curve
+ggplot(df, aes(x = Time, y = Cumulative_Adopters)) +
+  geom_line(color = "blue", size = 1) +
+  geom_hline(yintercept = M, linetype = "dashed", color = "black", size = 1.2) +
+  labs(title = "Bass Diffusion Model: Adoption Over Time",
+       x = "Time",
+       y = "Cumulative Adopters") +
+  theme_minimal()
+
+```
+
+
+```{r}
+
+# Compute new adopters at each time step
+dN_t <- c(diff(N_t), tail(diff(N_t), 1))  # First derivative (rate of new adoptions)
+
+# Compute contributions of innovators and imitators
+innovators <- p * (M - N_t)  # p * (Remaining Market)
+imitators <- q * (N_t / M) * (M - N_t)  # q * (Adopters Fraction) * (Remaining Market)
+new_adopters <- innovators + imitators
+
+# Create a data frame for the second plot
+df2 <- data.frame(Time = t, New_Adopters = new_adopters, Innovators = innovators, Imitators = imitators)
+
+# Plot the adoption components
+ggplot(df2, aes(x = Time)) +
+  geom_line(aes(y = New_Adopters, color = "New Adopters"), linetype = "dashed", size = 1.2) +
+  geom_line(aes(y = Innovators, color = "Innovators"), size = 1.2) +
+  geom_line(aes(y = Imitators, color = "Imitators"), size = 1.2) +
+  scale_color_manual(values = c("New Adopters" = "black", "Innovators" = "red", "Imitators" = "green")) +
+  labs(title = "Bass Diffusion Model: Innovators, Imitators, and New Adopters",
+       x = "Time",
+       y = "New Adopters per Time Unit",
+       color = "Legend") +
+  theme_minimal()
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
