@@ -1,5 +1,10 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
 
-```{r}
+```{r echo=TRUE}
 library(ggplot2)
 
 # Bass model parameters
@@ -12,8 +17,7 @@ t <- seq(0, 20, length.out = 100)  # 20 time periods
 
 ```
 
-
-```{r}
+```{r echo=TRUE}
 
 # Bass model equation for cumulative adoption
 bass_diffusion <- function(t, M, p, q) {
@@ -30,7 +34,6 @@ df
 
 ```
 
-
 ```{r}
 
 # Plot the Bass Diffusion Curve
@@ -43,7 +46,6 @@ ggplot(df, aes(x = Time, y = Cumulative_Adopters)) +
   theme_minimal()
 
 ```
-
 
 ```{r}
 
@@ -71,14 +73,11 @@ ggplot(df2, aes(x = Time)) +
   theme_minimal()
 ```
 
-
 ```{r}
 ```
 
-
 ```{r}
 ```
-
 
 ```{r}
 ```
