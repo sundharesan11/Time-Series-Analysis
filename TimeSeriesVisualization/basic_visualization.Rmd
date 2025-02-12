@@ -1,0 +1,88 @@
+---
+output: 
+  html_notebook: 
+    toc: true
+    fig_height: 10
+    fig_width: 20
+editor_options: 
+  chunk_output_type: inline
+---
+
+**About the Dataset:**
+
+The number of international passenger bookings (in thousands) per month on an airline (Pan Am) in the United States were obtained from the Federal Aviation Administration for the period 1949–1960 (Brown, 1963). The company used the data to predict future demand before ordering new aircraft and training aircrew. The data are available as a time series in R and illustrate several important concepts that arise in an exploratory time series analysis.
+
+```{r}
+data(AirPassengers) # loads built-in data-set
+AP <- AirPassengers
+AP
+```
+
+class(dataset) gives the class of the dataset.
+
+```{r}
+class(AP)
+```
+
+```{r}
+start(AP)
+end(AP)
+frequency(AP)
+```
+
+To analyse time series, it makes sense to put our data into objects of class ts. This can be achieved using a function also called ts, but this was not necessary for the airline data, which were already stored in this form
+
+```{r}
+plot(AP,  main="AirPassengers Data", ylab="Passengers (in thousands)", col="blue")
+```
+
+To get a clearer view of the trend, the seasonal effect can be removed by aggregating the data to the annual level, which can be achieved in R using the aggregate function. A summary of the values for each season can be viewed using a boxplot, with the cycle function being used to extract the seasons for each item of data. The plots can be put in a single graphics window using the layout function.
+
+```{r fig.width=20}
+layout(matrix(c(1,2), ncol=2))
+plot(aggregate(AP))
+boxplot(AP ~ cycle(AP))
+```
+
+In R, the function decompose estimates trends and seasonal effects using a moving average method. Nesting the function within plot (e.g., using plot(decompose())) produces a single figure showing the original series xt and the decomposed series mt, st, and zt.
+
+where, at time t, xt is the observed series, mt is the trend, st is the seasonal effect, and zt is an error term.
+
+```{r}
+decomposed <- decompose(AirPassengers)
+plot(decomposed)
+```
+
+Seasonal Plot: A seasonal plot is similar to a time plot except that the data are plotted against the individual “seasons” in which the data were observed.
+
+here we are using ggseasonplot() which is found in forecast package. Before running this code, install the package with {install.packages("forecast")}
+
+```{r}
+library(forecast)
+ggseasonplot(AirPassengers, year.labels=TRUE, main="Seasonal Plot")
+```
+
+ACF (Autocorrelation Function): Measures the correlation between a time series and its lagged values. It shows both direct and indirect correlations.
+
+Measures the correlation between a time series and its lagged values. Captures both direct and indirect relationships. If a time series has a strong trend, ACF will decay slowly. Helps determine if the series is stationary or non-stationary.
+
+```{r}
+acf(AirPassengers, main="Autocorrelation of AirPassengers")
+```
+
+PACF (Partial Autocorrelation Function): Measures the direct correlation between a time series and its lagged values, removing the effect of intermediate lags.
+
+Measures the direct correlation between a time series and its lagged values after removing the influence of intermediate lags. Helps identify the order of autoregressive (AR) terms in an ARMA/ARIMA model. If a series follows an AR process, PACF cuts off after a certain lag.
+
+```{r}
+pacf(AirPassengers, main="Partial Autocorrelation of AirPassengers")
+```
+
+Lag Plot: Lag plot will plot time series against lagged versions of themselves. Helps visualising 'auto-dependence' even when auto-correlations vanish.
+
+again the lag plot can be plotted using gglagplot() which is found in package called ggfortify.
+
+```{r}
+library(ggfortify)
+gglagplot(AirPassengers, lags=6)
+```
