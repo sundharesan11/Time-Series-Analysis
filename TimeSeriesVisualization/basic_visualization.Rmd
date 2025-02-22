@@ -1,10 +1,12 @@
 ---
-output: 
-  html_notebook: 
+output:
+  github_document:
+    toc: true
+  html_notebook:
     toc: true
     fig_height: 10
     fig_width: 20
-editor_options: 
+editor_options:
   chunk_output_type: inline
 ---
 
@@ -53,7 +55,7 @@ decomposed <- decompose(AirPassengers)
 plot(decomposed)
 ```
 
-Seasonal Plot: A seasonal plot is similar to a time plot except that the data are plotted against the individual “seasons” in which the data were observed.
+**Seasonal Plot:** A seasonal plot is similar to a time plot except that the data are plotted against the individual “seasons” in which the data were observed.
 
 here we are using ggseasonplot() which is found in forecast package. Before running this code, install the package with {install.packages("forecast")}
 
@@ -62,23 +64,29 @@ library(forecast)
 ggseasonplot(AirPassengers, year.labels=TRUE, main="Seasonal Plot")
 ```
 
-ACF (Autocorrelation Function): Measures the correlation between a time series and its lagged values. It shows both direct and indirect correlations.
+**ACF** (Autocorrelation Function): Measures the correlation between a time series and its lagged values. It shows both direct and indirect correlations.
 
-Measures the correlation between a time series and its lagged values. Captures both direct and indirect relationships. If a time series has a strong trend, ACF will decay slowly. Helps determine if the series is stationary or non-stationary.
+If a time series has a strong trend, ACF will decay slowly.
+
+Helps determine if the series is stationary or non-stationary.
 
 ```{r}
 acf(AirPassengers, main="Autocorrelation of AirPassengers")
 ```
 
-PACF (Partial Autocorrelation Function): Measures the direct correlation between a time series and its lagged values, removing the effect of intermediate lags.
+**PACF** (Partial Autocorrelation Function): Measures the direct correlation between a time series and its lagged values, removing the effect of intermediate lags.
 
-Measures the direct correlation between a time series and its lagged values after removing the influence of intermediate lags. Helps identify the order of autoregressive (AR) terms in an ARMA/ARIMA model. If a series follows an AR process, PACF cuts off after a certain lag.
+Helps identify the order of autoregressive (AR) terms in an ARMA/ARIMA model.
+
+If a series follows an AR process, PACF cuts off after a certain lag.
 
 ```{r}
 pacf(AirPassengers, main="Partial Autocorrelation of AirPassengers")
 ```
 
-Lag Plot: Lag plot will plot time series against lagged versions of themselves. Helps visualising 'auto-dependence' even when auto-correlations vanish.
+**Lag Plot:** Lag plot will plot time series against lagged versions of themselves.
+
+Helps visualising 'auto-dependence' even when auto-correlations vanish.
 
 again the lag plot can be plotted using gglagplot() which is found in package called ggfortify.
 
