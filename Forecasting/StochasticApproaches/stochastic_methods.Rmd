@@ -1,0 +1,311 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(forecast)
+library(tseries)
+
+# Generate sample AR(1) process
+set.seed(123)
+ar_sim <- arima.sim(list(ar = 0.7), n = 100)
+plot(ar_sim, main = "Simulated AR(1) Process")
+
+# Fit AR model
+ar_model <- Arima(ar_sim, order = c(1, 0, 0))
+summary(ar_model)
+
+# Diagnostic checks
+checkresiduals(ar_model)
+
+# Forecast
+ar_forecast <- forecast(ar_model, h = 20)
+plot(ar_forecast, main = "AR(1) Model Forecast")
+```
+
+
+```{r}
+# Generate sample MA(1) process
+set.seed(123)
+ma_sim <- arima.sim(list(ma = 0.7), n = 100)
+plot(ma_sim, main = "Simulated MA(1) Process")
+
+# Fit MA model
+ma_model <- Arima(ma_sim, order = c(0, 0, 1))
+summary(ma_model)
+
+# Diagnostic checks
+checkresiduals(ma_model)
+
+# Forecast
+ma_forecast <- forecast(ma_model, h = 20)
+plot(ma_forecast, main = "MA(1) Model Forecast")
+```
+
+
+```{r}
+# Generate sample ARMA(1,1) process
+set.seed(123)
+arma_sim <- arima.sim(list(ar = 0.7, ma = 0.5), n = 100)
+plot(arma_sim, main = "Simulated ARMA(1,1) Process")
+
+# Fit ARMA model
+arma_model <- Arima(arma_sim, order = c(1, 0, 1))
+summary(arma_model)
+
+# Diagnostic checks
+checkresiduals(arma_model)
+
+# Forecast
+arma_forecast <- forecast(arma_model, h = 20)
+plot(arma_forecast, main = "ARMA(1,1) Model Forecast")
+```
+
+
+```{r}
+# Generate non-stationary time series with trend
+set.seed(123)
+t <- 1:100
+y <- 0.7*cumsum(rnorm(100)) + 0.3*t
+ts_data <- ts(y)
+plot(ts_data, main = "Non-stationary Time Series")
+
+# Check stationarity
+adf.test(ts_data)
+
+# Auto-select ARIMA model
+auto_arima <- auto.arima(ts_data)
+summary(auto_arima)
+
+# Forecast using ARIMA
+arima_forecast <- forecast(auto_arima, h = 20)
+plot(arima_forecast, main = "ARIMA Model Forecast")
+```
+
+
+```{r}
+# Generate seasonal time series
+set.seed(123)
+t <- 1:120
+trend <- 0.2*t
+seasonal <- 15*sin(2*pi*t/12)
+y <- trend + seasonal + arima.sim(list(ar = 0.7), n = 120)
+ts_data <- ts(y, frequency = 12)
+plot(ts_data, main = "Seasonal Time Series")
+
+# Fit SARIMA model
+sarima_model <- Arima(ts_data, order = c(1, 1, 0), 
+                     seasonal = list(order = c(1, 1, 0), period = 12))
+summary(sarima_model)
+
+# Alternative: Auto-select SARIMA model
+auto_sarima <- auto.arima(ts_data, seasonal = TRUE)
+summary(auto_sarima)
+
+# Forecast
+sarima_forecast <- forecast(auto_sarima, h = 24)
+plot(sarima_forecast, main = "SARIMA Model Forecast")
+```
+
+
+```{r}
+library(rugarch)
+
+# Generate returns with volatility clustering
+set.seed(123)
+returns <- rep(0, 1000)
+sigma <- rep(0, 1000)
+sigma[1] <- 0.1
+for(i in 2:1000) {
+  sigma[i] <- sqrt(0.01 + 0.9*returns[i-1]^2)
+  returns[i] <- rnorm(1, 0, sigma[i])
+}
+returns <- returns[101:1000]
+returns_ts <- ts(returns)
+plot(returns_ts, main = "Returns with Volatility Clustering")
+
+# Specify and fit ARCH model
+arch_spec <- ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(1, 0)),
+                       mean.model = list(armaOrder = c(0, 0)))
+arch_fit <- ugarchfit(arch_spec, returns_ts)
+print(arch_fit)
+
+# Forecast volatility
+arch_forecast <- ugarchforecast(arch_fit, n.ahead = 20)
+plot(arch_forecast, which = 3)
+```
+
+
+```{r}
+# Specify and fit GARCH(1,1) model
+garch_spec <- ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(1, 1)),
+                        mean.model = list(armaOrder = c(0, 0)))
+garch_fit <- ugarchfit(garch_spec, returns_ts)
+print(garch_fit)
+
+# Forecast volatility
+garch_forecast <- ugarchforecast(garch_fit, n.ahead = 20)
+plot(garch_forecast, which = 3)
+```
+
+
+```{r}
+# Specify and fit ARMA(1,1)-GARCH(1,1) model
+armagarch_spec <- ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(1, 1)),
+                            mean.model = list(armaOrder = c(1, 1)))
+armagarch_fit <- ugarchfit(armagarch_spec, returns_ts)
+print(armagarch_fit)
+
+# Forecast
+armagarch_forecast <- ugarchforecast(armagarch_fit, n.ahead = 20)
+plot(armagarch_forecast, which = 1)  # Conditional mean forecast
+plot(armagarch_forecast, which = 3)  # Conditional sigma forecast
+```
+
+
+```{r}
+
+```
+
+
+
+```{r}
+# Already included in the dlm package used above
+# Extract the Kalman filter output from the previous BSM model
+kf_states <- bsm_filtered$m
+kf_cov <- bsm_filtered$C
+
+# Plot the filtered state (trend component)
+plot(ts_data, main = "Original Series with Kalman Filtered Trend")
+lines(dropFirst(kf_states[, 1]), col = "red")
+
+# Calculate 95% confidence intervals
+upper_ci <- dropFirst(kf_states[, 1]) + 1.96 * sqrt(dropFirst(kf_cov[, 1, 1]))
+lower_ci <- dropFirst(kf_states[, 1]) - 1.96 * sqrt(dropFirst(kf_cov[, 1, 1]))
+lines(upper_ci, col = "blue", lty = 2)
+lines(lower_ci, col = "blue", lty = 2)
+```
+
+
+```{r}
+```
+
+
+```{r}
+library(bsts)
+
+# Generate data with regression component
+set.seed(123)
+t <- 1:120
+trend <- 0.2*t
+seasonal <- 15*sin(2*pi*t/12)
+X <- matrix(rnorm(120*2), ncol = 2)  # Two predictor variables
+beta <- c(1.5, -0.8)
+y <- trend + seasonal + X %*% beta + rnorm(120, 0, 3)
+ts_data <- ts(y, frequency = 12)
+
+# Build and fit the model
+ss <- AddLocalLinearTrend(list(), ts_data)
+ss <- AddSeasonal(ss, ts_data, nseasons = 12)
+bsts_model <- bsts(ts_data ~ X, state.specification = ss, 
+                  niter = 1000, ping = 0)
+
+# Plot components
+plot(bsts_model, "components")
+
+# Plot fitted values vs actual
+plot(ts_data, main = "Observed vs Fitted")
+lines(as.numeric(fitted(bsts_model)), col = "red")
+
+# Forecast
+horizon <- 24
+pred <- predict(bsts_model, horizon = horizon, newdata = matrix(rnorm(horizon*2), ncol = 2))
+plot(pred, main = "BSTS Forecast")
+```
+
+
+```{r}
+library(BVAR)
+
+# Generate multivariate time series
+set.seed(123)
+n <- 100
+y1 <- arima.sim(list(ar = c(0.8, -0.4)), n = n)
+y2 <- 0.5*y1 + arima.sim(list(ar = 0.5), n = n)
+y <- cbind(y1, y2)
+colnames(y) <- c("Variable1", "Variable2")
+
+# Fit BVAR model
+bvar_model <- bvar(y, lags = 2)
+
+# Plot posterior distributions
+plot(bvar_model)
+
+# Forecast
+bvar_forecast <- predict(bvar_model, horizon = 12)
+plot(bvar_forecast)
+
+# Impulse response functions
+irf <- irf(bvar_model)
+plot(irf)
+```
+
+
+```{r}
+```
+
+
+
+```{r}
+library(arfima)
+
+# Generate fractionally integrated data
+set.seed(123)
+sim_arfima <- arfima.sim(n = 500, model = list(phi = 0.7, dfrac = 0.3))
+plot(sim_arfima, main = "Simulated ARFIMA Process")
+
+# Fit ARFIMA model
+arfima_model <- arfima(sim_arfima, order = c(1, 0, 0))
+summary(arfima_model)
+
+# Forecast
+arfima_forecast <- predict(arfima_model, n.ahead = 50)
+plot(arfima_forecast, main = "ARFIMA Forecast")
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
