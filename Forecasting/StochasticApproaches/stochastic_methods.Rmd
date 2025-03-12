@@ -1,7 +1,17 @@
 ---
 title: "R Notebook"
-output: html_notebook
+output: github_document
 ---
+
+### **What are Stochastic Approaches in Time Series Forecasting?**
+
+In time series forecasting, **stochastic models** assume that the future values of a series are influenced by **random shocks (error terms)** and some underlying systematic patterns (such as trend, seasonality, or lagged relationships).
+
+The key difference from **deterministic approaches** is that stochastic models accept the **randomness** inherent in real-world data and attempt to model it statistically.
+
+The goal is to identify **lag relationships, autocorrelations, and underlying structures** to make probabilistic forecasts.
+
+### 1. Autoregressive Model (AR)
 
 ```{r}
 library(forecast)
@@ -24,6 +34,7 @@ ar_forecast <- forecast(ar_model, h = 20)
 plot(ar_forecast, main = "AR(1) Model Forecast")
 ```
 
+### 2. Moving Average (MA) Model
 
 ```{r}
 # Generate sample MA(1) process
@@ -43,6 +54,7 @@ ma_forecast <- forecast(ma_model, h = 20)
 plot(ma_forecast, main = "MA(1) Model Forecast")
 ```
 
+### 3. Autoregressive Moving Average (ARMA) Model
 
 ```{r}
 # Generate sample ARMA(1,1) process
@@ -62,6 +74,7 @@ arma_forecast <- forecast(arma_model, h = 20)
 plot(arma_forecast, main = "ARMA(1,1) Model Forecast")
 ```
 
+### 4. Autoregressive Integrated Moving Average (ARMA) Model
 
 ```{r}
 # Generate non-stationary time series with trend
@@ -83,6 +96,7 @@ arima_forecast <- forecast(auto_arima, h = 20)
 plot(arima_forecast, main = "ARIMA Model Forecast")
 ```
 
+### 5. Seasonal Autoregressive Integrated Moving Average (SARIMA) Model
 
 ```{r}
 # Generate seasonal time series
@@ -108,6 +122,7 @@ sarima_forecast <- forecast(auto_sarima, h = 24)
 plot(sarima_forecast, main = "SARIMA Model Forecast")
 ```
 
+### 6. Autoregressive Conditional Heteroskedasticity (ARCH) Model
 
 ```{r}
 library(rugarch)
@@ -136,6 +151,7 @@ arch_forecast <- ugarchforecast(arch_fit, n.ahead = 20)
 plot(arch_forecast, which = 3)
 ```
 
+### 7. Generalized Autoregressive Conditional Heteroskedasticity (GARCH) Model
 
 ```{r}
 # Specify and fit GARCH(1,1) model
@@ -149,6 +165,7 @@ garch_forecast <- ugarchforecast(garch_fit, n.ahead = 20)
 plot(garch_forecast, which = 3)
 ```
 
+#### ARMA-GARCH Model (Combining Mean + Volatility)
 
 ```{r}
 # Specify and fit ARMA(1,1)-GARCH(1,1) model
@@ -163,34 +180,7 @@ plot(armagarch_forecast, which = 1)  # Conditional mean forecast
 plot(armagarch_forecast, which = 3)  # Conditional sigma forecast
 ```
 
-
-```{r}
-
-```
-
-
-
-```{r}
-# Already included in the dlm package used above
-# Extract the Kalman filter output from the previous BSM model
-kf_states <- bsm_filtered$m
-kf_cov <- bsm_filtered$C
-
-# Plot the filtered state (trend component)
-plot(ts_data, main = "Original Series with Kalman Filtered Trend")
-lines(dropFirst(kf_states[, 1]), col = "red")
-
-# Calculate 95% confidence intervals
-upper_ci <- dropFirst(kf_states[, 1]) + 1.96 * sqrt(dropFirst(kf_cov[, 1, 1]))
-lower_ci <- dropFirst(kf_states[, 1]) - 1.96 * sqrt(dropFirst(kf_cov[, 1, 1]))
-lines(upper_ci, col = "blue", lty = 2)
-lines(lower_ci, col = "blue", lty = 2)
-```
-
-
-```{r}
-```
-
+### 8. Bayesian Structural Time Series (BSTS) model
 
 ```{r}
 library(bsts)
@@ -224,6 +214,7 @@ pred <- predict(bsts_model, horizon = horizon, newdata = matrix(rnorm(horizon*2)
 plot(pred, main = "BSTS Forecast")
 ```
 
+### 9. Bayesian Vector Autoregression (BVAR) model
 
 ```{r}
 library(BVAR)
@@ -251,11 +242,7 @@ irf <- irf(bvar_model)
 plot(irf)
 ```
 
-
-```{r}
-```
-
-
+### 10. Autoregressive Fractionally Integrated Moving Average (ARFIMA) Model
 
 ```{r}
 library(arfima)
@@ -272,40 +259,4 @@ summary(arfima_model)
 # Forecast
 arfima_forecast <- predict(arfima_model, n.ahead = 50)
 plot(arfima_forecast, main = "ARFIMA Forecast")
-```
-
-
-```{r}
-```
-
-
-```{r}
-```
-
-
-```{r}
-```
-
-
-```{r}
-```
-
-
-```{r}
-```
-
-
-```{r}
-```
-
-
-```{r}
-```
-
-
-```{r}
-```
-
-
-```{r}
 ```
