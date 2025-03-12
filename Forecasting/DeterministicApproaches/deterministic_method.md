@@ -1,6 +1,28 @@
 R Notebook
 ================
 
+## Definition of Forecasting
+
+Forecasting in time series analysis refers to the process of making
+predictions about future values based on previously observed values. It
+involves using historical patterns, trends, and relationships within the
+data to project future outcomes.
+
+### Deterministic Approaches
+
+Deterministic forecasting models assume that future values are
+completely determined by past values, with no random components. These
+approaches:
+
+- Rely on mathematical equations that precisely define the relationship
+  between variables
+- Do not account for randomness or uncertainty in predictions
+- Work well for systems with clear, stable patterns and minimal noise
+- Include methods like linear regression, exponential smoothing, and
+  decomposition techniques
+
+### 1. Linear Trend Model
+
 ``` r
 # Generate sample time series with linear trend
 set.seed(123)
@@ -26,6 +48,8 @@ lines(101:110, forecast_values, col = "red", lwd = 2)
 
 ![](deterministic_method_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
 
+### 2. Polynomial Trend Model
+
 ``` r
 # Generate sample time series with quadratic trend
 set.seed(123)
@@ -48,6 +72,8 @@ lines(101:110, forecast_values, col = "red", lwd = 2)
 ```
 
 ![](deterministic_method_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+
+### 3. Simple Exponential Smoothing (SES) in Time Series Forecasting
 
 ``` r
 library(forecast)
@@ -116,6 +142,8 @@ plot(ses_model, main = "Simple Exponential Smoothing Forecast")
 
 ![](deterministic_method_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
+### 4. Holt’s Linear Method (Double Exponential Smoothing) in Time Series Forecasting
+
 ``` r
 # Generate sample time series with trend
 set.seed(123)
@@ -175,6 +203,8 @@ plot(holt_model, main = "Holt's Linear Method Forecast")
 ```
 
 ![](deterministic_method_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+### 5. Holt-Winters Method (Triple Exponential Smoothing) in Time Series Forecasting
 
 ``` r
 # Generate sample time series with trend and seasonality
@@ -255,6 +285,8 @@ plot(hw_model, main = "Holt-Winters Method Forecast")
 
 ![](deterministic_method_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
+### 6. Classical Decomposition in Time Series Analysis
+
 ``` r
 # Generate sample time series
 set.seed(123)
@@ -303,6 +335,8 @@ lines(121:132, forecast_values, col = "red", lwd = 2)
 
 ![](deterministic_method_files/figure-gfm/unnamed-chunk-6-2.png)<!-- -->
 
+### 7. STL (Seasonal and Trend decomposition using LOESS) in Time Series Analysis
+
 ``` r
 library(forecast)
 
@@ -328,6 +362,8 @@ plot(stl_forecast, main = "STL Decomposition Forecast")
 ```
 
 ![](deterministic_method_files/figure-gfm/unnamed-chunk-7-2.png)<!-- -->
+
+### 8. Singular Spectrum Analysis (SSA) in Time Series Analysis
 
 ``` r
 library(Rssa)
@@ -379,6 +415,8 @@ plot(ssa_forecast)
 ```
 
 ![](deterministic_method_files/figure-gfm/unnamed-chunk-8-3.png)<!-- -->
+
+### 9. Centered Moving Average (CMA)
 
 ``` r
 # Generate sample time series
